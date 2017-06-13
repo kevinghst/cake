@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>My First Web Page</h1>
+
+<script>
+function maxValue(cakeTypes, cap, cache){
+  if(cakeTypes.length === 0){
+    return 0;
+  }
+
+  let highestPrice = 0;
+  for(let i=0; i<cakeTypes.length; i++){
+    let cake = cakeTypes[i];
+    let remainder = cap - cake.weight;
+
+    debugger
+
+    if(remainder < 0){
+      continue;
+    } else {
+      let validCakes = cakeTypes.filter(function(x){
+        return x.weight <= remainder;
+      })
+
+      let remainHighest = cache[remainder] || maxValue(validCakes, remainder, cache);
+      cache[remainder] = remainHighest;
+
+      let currentHighest = cake.value + remainHighest;
+      if(currentHighest > highestPrice){
+        highestPrice = currentHighest;
+      }
+    }
+  }
+  return highestPrice;
+}
+
+var cakeTypes = [
+  {weight: 7, value: 160},
+  {weight: 3, value: 90},
+  {weight: 2, value: 15},
+];
+
+var capacity = 20;
+
+console.log(maxValue(cakeTypes, capacity, {}));
+</script>
+
+</body>
+</html>
+Try it Yourself »

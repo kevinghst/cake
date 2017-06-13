@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>My First Web Page</h1>
+
+
+<script type="text/javascript">
+
+
+function rabbitNav(array){
+
+  let x1, x2, y1, y2, x, y;
+
+  // Identify potential center x-coordinate(s)
+  if(array.length % 2 === 0){
+    x1 = (array.length)/2;
+    x2 = (array.length)/2 - 1;
+  } else {
+    x = (array.length - 1)/2;
+  }
+
+  // Identify potential center y-coordinate(s)
+  if(array[0].length % 2 === 0){
+    y1 = (array[0].length)/2;
+    y2 = (array[0].length)/2 - 1;
+  } else {
+    y = (array[0].length - 1)/2;
+  }
+
+  // If numbers of rows and columns are both even, select the x and y values with the biggest value
+  if(array.length % 2 === 0 && array[0].length % 2 === 0){
+    x = x1;
+    y = y1;
+    let maxValue = array[x1][y1];
+    if(array[x1][y2] > maxValue){ x = x1; y = y2; maxValue = array[x1][y2]; }
+    if(array[x2][y1] > maxValue){ x = x2; y = y1; maxValue = array[x2][y1]; }
+    if(array[x2][y2] > maxValue){ x = x2; y = y2; maxValue = array[x2][y2]; }
+  }
+  // If only the number of rows are even, select the row that gives the bigger value
+  else if(array.length % 2 === 0){
+    x = x1;
+    let maxValue = array[x1][y];
+    if(array[x2][y] > maxValue){ x = x2 };
+  }
+  // If only the number of columns are even, select the column that gives the bigger value
+  else if(array[0].length % 2 === 0){
+    y = y1;
+    let maxValue = array[x][y1];
+    if(array[x][y2] > maxValue){ y = y2 };
+  }
+
+// Once we have our starting spot [x,y], we can solve the problem.
+// We initialize a new variable currentPos to the starting spot, we use a while loop to continually update the currentPos,
+// after traveling to the nearby spot with the highest value in it. We always reset the value of the position which the
+// rabbit just travelled to 0, to represent the fact that the rabbit consumed all of the carrots. Meanwhile, we continually
+// add the number of carrots from each travelled spot to a accumulated sum, which will be the final return value.
+// The while loop ends when all of its surrounding spots are either out of bound or has a value of 0.
+
+  let currentPos = [x,y];
+  let totalCarrots = array[currentPos[0]][currentPos[1]];
+
+
+  // We use a helper function nextGrid to return the neighboring grid with the highest carrot count. If
+  // all neighboring grids are either out of bound or 0, null is returned. Resetting of current grid to 0 is performed in the
+  // helper function.
+
+  while(nextGrid(array, currentPos)){
+    currentPos = nextGrid(array, currentPos);
+    totalCarrots += array[currentPos[0]][currentPos[1]];
+  }
+
+  return totalCarrots;
+}
+
+function nextGrid(array, pos){
+  let highestValue = null;
+
+  let x = pos[0];
+  let y = pos[1];
+  let nextX = x;
+  let nextY = y;
+
+  if(array[x+1] && array[x+1][y] > highestValue){
+    highestValue = array[x+1][y];
+    nextX = x+1;
+    nextY = y;
+  }
+  if(array[x][y+1] > highestValue){
+    highestValue = array[x][y+1];
+    nextX = x;
+    nextY = y+1;
+  }
+  if(array[x-1] && array[x-1][y] > highestValue){
+    highestValue = array[x-1][y];
+    nextX = x - 1;
+    nextY = y;
+  }
+  if(array[x][y-1] > highestValue){
+    highestValue = array[x][y-1];
+    nextX = x;
+    nextY = y-1;
+  }
+
+  array[x][y] = 0;
+
+  if(highestValue){
+    return [nextX, nextY];
+  } else {
+    return null;
+  }
+}
+
+let array = [
+  [5,7,8,6,3],
+  [0,0,7,0,4],
+  [4,6,3,4,9],
+  [3,1,0,5,8]
+];
+
+console.log(rabbitNav(array));
+
+
+</script>
+
+</body>
+</html>
+Try it Yourself »
