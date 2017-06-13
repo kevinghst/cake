@@ -1,4 +1,4 @@
-function maxCoordinate(coords, matrix){
+function getMaxCoord(coords, matrix){
   let maxCoord = coords[0];
   let maxX = maxCoord[0];
   let maxY = maxCoord[1];
@@ -7,8 +7,9 @@ function maxCoordinate(coords, matrix){
   coords.forEach(function(coord){
     let x = coord[0];
     let y = coord[1];
-    if(matrix[x][y] > maxValue){
+    if(matrix[x] && matrix[x][y] > maxValue){
       maxCoord = coord;
+      maxValue = matrix[x][y];
       maxX = x;
       maxY = y;
     }
@@ -38,19 +39,19 @@ function rabbitNav(matrix){
 
   // If numbers of rows and columns are both even, select the x and y values with the biggest value
   if(matrix.length % 2 === 0 && matrix[0].length % 2 === 0){
-    let maxCoord = maxCoordinate([[x1,y1], [x1,y2], [x2,y1], [x2,y2]],matrix);
+    let maxCoord = getMaxCoord([[x1,y1], [x1,y2], [x2,y1], [x2,y2]],matrix);
     x = maxCoord[0];
     y = maxCoord[1];
   }
   // If only the number of rows are even, select the row that gives the bigger value
   else if(matrix.length % 2 === 0){
-    let maxCoord = maxCoordinate([[x1,y], [x2,y]],matrix);
+    let maxCoord = getMaxCoord([[x1,y], [x2,y]],matrix);
     x = maxCoord[0];
     y = maxCoord[1];
   }
   // If only the number of columns are even, select the column that gives the bigger value
   else if(matrix[0].length % 2 === 0){
-    let maxCoord = maxCoordinate([[x,y1], [x,y2]],matrix);
+    let maxCoord = getMaxCoord([[x,y1], [x,y2]],matrix);
     x = maxCoord[0];
     y = maxCoord[1];
   }
@@ -78,44 +79,20 @@ function rabbitNav(matrix){
 }
 
 function nextGrid(matrix, pos){
-  // We initialize the variable highestValue - which represents the number of carrots in the grid with most carrots - to null.
-  // As we iterate through the four grids on top, bottom, left, and right of the current grid, we update the highestValue by
-  // comparing the current value against the highestValue and updating the latter. If all of the neighboring grids are 0
-  // or out of bound, the highestValue will remain null by the end.
-
-  let highestValue = null;
-
   let x = pos[0];
   let y = pos[1];
-  let nextX = x;
-  let nextY = y;
 
-  if(matrix[x+1] && matrix[x+1][y] > highestValue){
-    highestValue = matrix[x+1][y];
-    nextX = x+1;
-    nextY = y;
-  }
-  if(matrix[x][y+1] > highestValue){
-    highestValue = matrix[x][y+1];
-    nextX = x;
-    nextY = y+1;
-  }
-  if(matrix[x-1] && matrix[x-1][y] > highestValue){
-    highestValue = matrix[x-1][y];
-    nextX = x - 1;
-    nextY = y;
-  }
-  if(matrix[x][y-1] > highestValue){
-    highestValue = matrix[x][y-1];
-    nextX = x;
-    nextY = y-1;
-  }
-
-  // We reset the number of carrots in current grid to 0
+  // We set the current position in matrix to 0, to represent the fact that the rabbit eats all carrots in a given
+  // grid
   matrix[x][y] = 0;
 
-  if(highestValue){
-    return [nextX, nextY];
+  // We see whether if any of the top, bottom, left, right neighboring grids has any carrots. If it does, we use
+  // our maxCoordinate function to get the coordinate with the highest carrot number in it. If not, return null
+  if(matrix[x+1] && matrix[x+1][y] > 0 ||
+     matrix[x-1] && matrix[x-1][y] > 0 ||
+     matrix[x][y+1] > 0 ||
+     matrix[x][y-1] > 0){
+    return getMaxCoord([[x+1,y], [x-1, y], [x, y+1], [x, y-1]], matrix);
   } else {
     return null;
   }
